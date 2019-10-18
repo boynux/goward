@@ -1,6 +1,9 @@
 package main
 
 import (
+  "math/rand"
+  "time"
+
 	"github.com/gen2brain/raylib-go/raygui"
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
@@ -61,6 +64,10 @@ func (q *ChoiceQuestion) Draw(x, y, w, h float32) {
     for i := 1; i < 4; i++ {
       q.answers[i] = q.gen.FalseAnswer()
     }
+
+    // shuffle answers :)
+    rand.Seed(time.Now().UnixNano())
+    rand.Shuffle(len(q.answers), func(i, j int) { q.answers[i], q.answers[j] = q.answers[j], q.answers[i] })
   }
 
 	for i, _ := range q.answers {
