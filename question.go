@@ -53,8 +53,6 @@ func (q *ChoiceQuestion) IsAnswerCorrect() *bool {
 }
 
 func (q *ChoiceQuestion) Draw(x, y, w, h float32) {
-	raygui.Label(rl.NewRectangle(x+5, y+5, 20, 20), q.gen.QuestionString())
-
 	if len(q.answers) == 0 {
 		q.gen.Generate()
 		q.answers = make([]string, 4)
@@ -69,6 +67,7 @@ func (q *ChoiceQuestion) Draw(x, y, w, h float32) {
 		rand.Shuffle(len(q.answers), func(i, j int) { q.answers[i], q.answers[j] = q.answers[j], q.answers[i] })
 	}
 
+	raygui.Label(rl.NewRectangle(x+5, y+5, 20, 20), q.gen.QuestionString())
 	for i, _ := range q.answers {
 		chosen := raygui.Button(rl.NewRectangle((x+5+float32(45*i)), y+20+5+5, 40, 20), q.answers[i])
 

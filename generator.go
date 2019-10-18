@@ -13,35 +13,59 @@ type Generator interface {
 	FalseAnswer() string
 }
 
-type AdditionGenerator struct {
+type BasicGenerator struct {
 	Max        int32
 	Min        int32
 	BlankIndex *int32
 	Left       int32
 	Right      int32
+	Operator   *string
 	Result     int32
+	Holder     int32
+	Operators  []string
 }
 
-func NewAdditionGenerator(min, max int32, blankIndex *int32) *AdditionGenerator {
-	g := &AdditionGenerator{
+func NewBasicGenerator(min, max int32, blankIndex *int32, o []string) *BasicGenerator {
+	if len(o) == 0 {
+		o = []string{"+"}
+	}
+
+	g := &BasicGenerator{
 		max,
 		min,
 		blankIndex,
 		-1,
 		-1,
+		nil,
 		-1,
+		-1,
+		o,
 	}
-
-	g.Generate()
 
 	return g
 }
 
-func (a *AdditionGenerator) Generate() bool {
+func (a *BasicGenerator) Generate() bool {
 	rand.Seed(time.Now().UTC().UnixNano())
 	a.Left = rand.Int31n(a.Max-a.Min+1) + a.Min
 	a.Right = rand.Int31n(a.Max-a.Min+1) + a.Min
-	a.Result = a.Left + a.Right
+
+	a.Operator = &a.Operators[rand.Intn(len(a.Operators))]
+
+	switch *a.Operator {
+	case "+":
+		a.Result = a.Left + a.Right
+	case "-":
+		a.Result = a.Left - a.Right
+		if a.Result < 0 {
+			a.Result = a.Result * -1
+			a.Left, a.Right = a.Right, a.Left
+		}
+	case "*":
+		a.Result = a.Left * a.Right
+	default:
+		a.Result = a.Left + a.Right
+	}
 
 	blankIndex := rand.Int31n(3)
 
@@ -51,24 +75,27 @@ func (a *AdditionGenerator) Generate() bool {
 
 	switch blankIndex {
 	case 0:
+		a.Holder = a.Left
 		a.Left = -1
 	case 1:
+		a.Holder = a.Right
 		a.Right = -1
 	case 2:
+		a.Holder = a.Result
 		a.Result = -1
 	}
 
 	return true
 }
 
-func (a *AdditionGenerator) QuestionString() string {
+func (a *BasicGenerator) QuestionString() string {
 	q := "____ "
 
 	if a.Left != -1 {
 		q = fmt.Sprintf("%d", a.Left)
 	}
 
-	q += " + "
+	q += " " + *a.Operator + " "
 
 	if a.Right != -1 {
 		q += fmt.Sprintf("%d", a.Right)
@@ -87,21 +114,11 @@ func (a *AdditionGenerator) QuestionString() string {
 	return q
 }
 
-func (a *AdditionGenerator) Answer() string {
-	var answer int32
-
-	if a.Left == -1 {
-		answer = a.Result - a.Right
-	} else if a.Right == -1 {
-		answer = a.Result - a.Left
-	} else {
-		answer = a.Left + a.Right
-	}
-
-	return fmt.Sprintf("%d", answer)
+func (a *BasicGenerator) Answer() string {
+	return fmt.Sprintf("%d", a.Holder)
 }
 
-func (a *AdditionGenerator) FalseAnswer() string {
+func (a *BasicGenerator) FalseAnswer() string {
 	rand.Seed(time.Now().UTC().UnixNano())
 
 	for {

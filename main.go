@@ -42,7 +42,7 @@ func main() {
 
 	raygui.LoadGuiStyle("styles/default_dark.style")
 
-	add := NewAdditionGenerator(0, 20, nil)
+  add := NewBasicGenerator(0, 20, nil, []string{"+", "-"})
 	s := NewScenario(NewQuestion(add), 10, 2)
 
 	for !buttonClicked && !exit && !rl.WindowShouldClose() {
