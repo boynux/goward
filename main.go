@@ -14,6 +14,10 @@ var (
 	maxGestureStrings int = 20
 )
 
+const (
+	TotalQuestionsPerScene = 20
+)
+
 func main() {
 	sigs := make(chan os.Signal, 1)
 	done := make(chan bool, 1)
@@ -40,17 +44,17 @@ func main() {
 
 	rl.SetTargetFPS(60)
 
-	raygui.LoadGuiStyle("styles/default_dark.style")
+	raygui.LoadGuiStyle("/etc/goward/styles/solarized_light.style")
 
-  add := NewBasicGenerator(0, 20, nil, []string{"+", "-"})
-	s := NewScenario(NewQuestion(add), 10, 2)
+	add := NewBasicGenerator(0, TotalQuestionsPerScene, nil, []string{"+", "-"})
+	s := NewScenario(NewQuestion(add), 20, 2)
 
 	for !buttonClicked && !exit && !rl.WindowShouldClose() {
 		rl.BeginDrawing()
-		rl.ClearBackground(rl.Black)
+		rl.ClearBackground(rl.NewColor(0xfe, 0xfc, 0xf5, 0xff))
 
 		r, c := s.Repeats()
-		progressValue = float32(r) / 10.0 /* it's the total repeats, fix it */
+		progressValue = float32(r) / TotalQuestionsPerScene
 
     raygui.Label(rl.NewRectangle(float32(screenWidth - 80), 5, 75, 20), fmt.Sprintf("Correct: %d", c))
 
