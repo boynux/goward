@@ -51,7 +51,7 @@ func main() {
 
 	for !buttonClicked && !exit && !rl.WindowShouldClose() {
 		rl.BeginDrawing()
-		rl.ClearBackground(rl.NewColor(0xfe, 0xfc, 0xf5, 0xff))
+		rl.ClearBackground(raygui.BackgroundColor())
 
 		r, c := s.Repeats()
 		progressValue = float32(r) / TotalQuestionsPerScene
