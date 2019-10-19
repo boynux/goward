@@ -46,10 +46,10 @@ func main() {
 
 	raygui.LoadGuiStyle("/etc/goward/styles/solarized_light.style")
 
-	// add := NewBasicGenerator(0, 10, nil, []string{"+", "-"})
+	add := NewBasicGenerator(0, 10, nil, []string{"+", "-"})
   even := NewEvenOddGenerator(1, 20)
 
-	s := NewScenario(NewQuestion(even), TotalQuestionsPerScene, 1)
+	s := NewScenario([]Question{ NewQuestion(add), NewQuestion(even)}, TotalQuestionsPerScene, 1)
 
 	for !buttonClicked && !exit && !rl.WindowShouldClose() {
 		rl.BeginDrawing()
