@@ -47,14 +47,21 @@ func (s *Scenario) Play() bool {
 		s.question.Draw(50, 70, 100, 100)
 
 	} else {
-		r := rl.NewRectangle(40, 90, 20, 20)
+		c := rl.Green
+		t := correctAnswer
 
-		if lastAnswerWasCorrect {
-			raygui.LabelEx(r, fmt.Sprintf("%s!", correctAnswer), rl.Green, raygui.BackgroundColor(), raygui.BackgroundColor())
-		} else {
-			raygui.LabelEx(r, fmt.Sprintf("%s!", incorrectAnswer), rl.Red, raygui.BackgroundColor(), raygui.BackgroundColor())
+		if lastAnswerWasCorrect == false {
+			c = rl.Red
+			t = incorrectAnswer
 		}
-		raygui.Label(rl.NewRectangle(float32(40+rl.MeasureText(incorrectAnswer, 0xa)), 90, 20, 20), "Ready for next question ....")
+
+		r := rl.NewRectangle(40, 90, 20, 20)
+		o := rl.MeasureText(t, rl.GetFontDefault().BaseSize)
+
+		raygui.LabelEx(r, fmt.Sprintf("%s!", t), c, raygui.BackgroundColor(), raygui.BackgroundColor())
+
+		r.X = r.X + 10 + float32(o)
+		raygui.Label(r, "Ready for next question ....")
 	}
 
 	if a := s.question.IsAnswerCorrect(); a != nil {
