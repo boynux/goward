@@ -46,6 +46,7 @@ func main() {
 	even := NewEvenOddGenerator(1, 20)
 
 	s := NewScenario([]Question{NewQuestion(add), NewQuestion(even)}, TotalQuestionsPerScene, 1)
+  s.Order(Random)
 
 	for !buttonClicked && !exit && !rl.WindowShouldClose() {
 		rl.BeginDrawing()
