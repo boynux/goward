@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	TotalQuestionsPerScene = 20
+	TotalQuestionsPerScene = 30
 )
 
 func main() {
@@ -37,10 +37,11 @@ func main() {
 
 	raygui.LoadGuiStyle("styles/solarized_light.style")
 
-	add := NewBasicGenerator(0, 10, nil, []string{"+", "-"})
-	even := NewEvenOddGenerator(1, 20)
+	bg := NewBasicGenerator(0, 20, nil, []string{"+", "-"})
+	ag := NewBasicAdditionGenerator(10, 20)
+	even := NewEvenOddGenerator(1, 50)
 
-	s := NewScenario([]Question{NewQuestion(add), NewQuestion(even)}, TotalQuestionsPerScene, 1)
+	s := NewScenario([]Question{NewChoiceQuestion(bg), NewChoiceQuestion(even), NewRectangleChoiceQuestion(ag)}, TotalQuestionsPerScene, 1)
 	s.Order(Random)
 
 	for !exit && !rl.WindowShouldClose() {

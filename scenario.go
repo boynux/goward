@@ -18,6 +18,10 @@ const (
 	Ordered
 )
 
+const (
+	NextQuestionDelay = 1 * time.Second
+)
+
 type Scenario struct {
 	question       []Question
 	repeat         int32
@@ -83,7 +87,7 @@ func (s *Scenario) Play() bool {
 			s.index = s.index + 1
 			s.activeQuestion.Reset()
 
-			nextQuestionTimer = time.AfterFunc(2*time.Second, func() {
+			nextQuestionTimer = time.AfterFunc(NextQuestionDelay, func() {
 				nextQuestionTimer = nil
 				s.activeQuestion = s.RotateQuestions()
 			})

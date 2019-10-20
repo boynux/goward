@@ -179,3 +179,22 @@ func (a *BasicGenerator) FalseAnswer() string {
 func (a *BasicGenerator) MaxChoices() int {
 	return 4
 }
+
+func (a *BasicGenerator) GetLeft() int32 {
+	return a.Left
+}
+
+func (a *BasicGenerator) GetRight() int32 {
+	return a.Right
+}
+
+type BasicAdditionGenerator struct {
+	*BasicGenerator
+}
+
+func NewBasicAdditionGenerator(min, max int32) *BasicAdditionGenerator {
+	var index int32 = 2
+	return &BasicAdditionGenerator{
+		NewBasicGenerator(min, max, &index, []string{"+"}),
+	}
+}
