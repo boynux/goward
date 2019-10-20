@@ -10,10 +10,6 @@ import (
 	"github.com/gen2brain/raylib-go/raylib"
 )
 
-var (
-	maxGestureStrings int = 20
-)
-
 const (
 	TotalQuestionsPerScene = 20
 )
@@ -47,9 +43,9 @@ func main() {
 	raygui.LoadGuiStyle("/etc/goward/styles/solarized_light.style")
 
 	add := NewBasicGenerator(0, 10, nil, []string{"+", "-"})
-  even := NewEvenOddGenerator(1, 20)
+	even := NewEvenOddGenerator(1, 20)
 
-	s := NewScenario([]Question{ NewQuestion(add), NewQuestion(even)}, TotalQuestionsPerScene, 1)
+	s := NewScenario([]Question{NewQuestion(add), NewQuestion(even)}, TotalQuestionsPerScene, 1)
 
 	for !buttonClicked && !exit && !rl.WindowShouldClose() {
 		rl.BeginDrawing()
@@ -58,14 +54,16 @@ func main() {
 		r, c := s.Repeats()
 		progressValue = float32(r) / TotalQuestionsPerScene
 
-    raygui.Label(rl.NewRectangle(float32(screenWidth - 80), 5, 75, 20), fmt.Sprintf("Correct: %d", c))
+		raygui.Label(rl.NewRectangle(float32(screenWidth-80), 5, 75, 20), fmt.Sprintf("Correct: %d", c))
 
 		if s.Play() == false {
-			raygui.Label(rl.NewRectangle(float32(screenWidth)/2-80, float32(screenHeight)/2-20, 20, 20), fmt.Sprintf("%d correct out of %d questions", c, r))
+			if showResults(r, c) {
+				s.Restart()
+			}
 		}
 
 		raygui.ProgressBar(rl.NewRectangle(5, float32(screenHeight-30-5), float32(screenWidth-60-5-5-5), 30), progressValue)
-    raygui.Label(rl.NewRectangle(float32(screenWidth) / 2 - 35, float32(screenHeight - 30), 20, 20), fmt.Sprintf("%d", r + 1))
+		raygui.Label(rl.NewRectangle(float32(screenWidth)/2-35, float32(screenHeight-30), 20, 20), fmt.Sprintf("%d", r+1))
 		buttonClicked = raygui.Button(rl.NewRectangle(float32(screenWidth-60-5), float32(screenHeight-30-5), 60, 30), "Exit")
 
 		rl.EndDrawing()

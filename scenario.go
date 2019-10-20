@@ -40,6 +40,16 @@ func NewScenario(q []Question, repeat, maxErrors int32) *Scenario {
 	}
 }
 
+func (s *Scenario) Restart() {
+	s.index = 0
+	s.correct = 0
+
+	if nextQuestionTimer != nil {
+		nextQuestionTimer.Stop()
+		nextQuestionTimer = nil
+	}
+}
+
 func (s *Scenario) Play() bool {
 	if s.index >= s.repeat {
 		return false
@@ -92,7 +102,6 @@ func (s *Scenario) Play() bool {
 func (s *Scenario) RotateQuestions() Question {
 	set := s.index * int32(len(s.question)) / s.repeat
 
-	fmt.Println(set)
 	return s.question[set]
 }
 

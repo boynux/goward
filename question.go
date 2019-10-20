@@ -58,7 +58,7 @@ func (q *ChoiceQuestion) Draw(x, y, w, h float32) {
 		q.answers = make([]string, q.gen.MaxChoices())
 		q.answers[0] = q.gen.Answer()
 
-		for i := 1; i <  q.gen.MaxChoices(); i++ {
+		for i := 1; i < q.gen.MaxChoices(); i++ {
 			q.answers[i] = q.gen.FalseAnswer()
 		}
 
