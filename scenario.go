@@ -50,6 +50,25 @@ func (s *Scenario) Restart() {
 	}
 }
 
+func showResult(isCorrect bool) {
+  c := rl.Green
+  t := correctAnswer
+
+  if isCorrect == false {
+    c = rl.Red
+    t = incorrectAnswer
+  }
+
+  r := rl.NewRectangle(40, 90, 20, 20)
+  o := rl.MeasureText(t, rl.GetFontDefault().BaseSize)
+
+  raygui.LabelEx(r, fmt.Sprintf("%s!", t), c, raygui.BackgroundColor(), raygui.BackgroundColor())
+
+  r.X = r.X + 10 + float32(o)
+  raygui.Label(r, "Ready for next question ....")
+
+}
+
 func (s *Scenario) Play() bool {
 	if s.index >= s.repeat {
 		return false
@@ -61,21 +80,7 @@ func (s *Scenario) Play() bool {
 		s.activeQuestion.Draw(50, 70, 100, 100)
 
 	} else {
-		c := rl.Green
-		t := correctAnswer
-
-		if lastAnswerWasCorrect == false {
-			c = rl.Red
-			t = incorrectAnswer
-		}
-
-		r := rl.NewRectangle(40, 90, 20, 20)
-		o := rl.MeasureText(t, rl.GetFontDefault().BaseSize)
-
-		raygui.LabelEx(r, fmt.Sprintf("%s!", t), c, raygui.BackgroundColor(), raygui.BackgroundColor())
-
-		r.X = r.X + 10 + float32(o)
-		raygui.Label(r, "Ready for next question ....")
+		showResult(lastAnswerWasCorrect)
 	}
 
 	if a := s.activeQuestion.IsAnswerCorrect(); a != nil {
