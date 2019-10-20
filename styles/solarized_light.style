@@ -48,7 +48,7 @@ SLIDERBAR_ACTIVE_COLOR                  0xfcf6e3ff
 SLIDERBAR_ZERO_LINE_COLOR               0xfcf7e6ff
 PROGRESSBAR_BORDER_COLOR                0x38393aff
 PROGRESSBAR_INSIDE_COLOR                0xfdfbf2ff
-PROGRESSBAR_PROGRESS_COLOR              0xfdf9ecff
+PROGRESSBAR_PROGRESS_COLOR              0xacf9ecff
 PROGRESSBAR_BORDER_WIDTH                0x2
 SPINNER_LABEL_BORDER_COLOR              0x38393aff
 SPINNER_LABEL_INSIDE_COLOR              0xfdfbf2ff

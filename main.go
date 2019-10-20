@@ -32,14 +32,10 @@ func main() {
 	screenHeight := int32(210)
 
 	rl.SetConfigFlags(rl.FlagVsyncHint)
-
 	rl.InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window")
-
-	buttonClicked := false
-
 	rl.SetTargetFPS(60)
 
-	raygui.LoadGuiStyle("/etc/goward/styles/solarized_light.style")
+	raygui.LoadGuiStyle("styles/solarized_light.style")
 
 	add := NewBasicGenerator(0, 10, nil, []string{"+", "-"})
 	even := NewEvenOddGenerator(1, 20)
@@ -47,7 +43,7 @@ func main() {
 	s := NewScenario([]Question{NewQuestion(add), NewQuestion(even)}, TotalQuestionsPerScene, 1)
 	s.Order(Random)
 
-	for !buttonClicked && !exit && !rl.WindowShouldClose() {
+	for !exit && !rl.WindowShouldClose() {
 		rl.BeginDrawing()
 		rl.ClearBackground(raygui.BackgroundColor())
 
@@ -62,7 +58,7 @@ func main() {
 		}
 
 		showProgress(TotalQuestionsPerScene, r)
-		buttonClicked = raygui.Button(rl.NewRectangle(float32(screenWidth-60-5), float32(screenHeight-30-5), 60, 30), "Exit")
+		exit = raygui.Button(rl.NewRectangle(float32(screenWidth-60-5), float32(screenHeight-30-5), 60, 30), "Exit")
 
 		rl.EndDrawing()
 
