@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"time"
-  "math/rand"
 
 	"github.com/gen2brain/raylib-go/raygui"
 	rl "github.com/gen2brain/raylib-go/raylib"
@@ -14,8 +14,8 @@ var index int
 type order int
 
 const (
-  Random order = iota
-  Ordered
+	Random order = iota
+	Ordered
 )
 
 type Scenario struct {
@@ -25,7 +25,7 @@ type Scenario struct {
 	correct        int32
 	maxErrors      int32
 	activeQuestion Question
-  order          order
+	order          order
 }
 
 var (
@@ -34,8 +34,8 @@ var (
 )
 
 const (
-	correctAnswer   = "correct"
-	incorrectAnswer = "Incorrect"
+	CorrectAnswer   = "correct"
+	IncorrectAnswer = "Incorrect"
 )
 
 func NewScenario(q []Question, repeat, maxErrors int32) *Scenario {
@@ -46,7 +46,7 @@ func NewScenario(q []Question, repeat, maxErrors int32) *Scenario {
 		0,
 		maxErrors,
 		q[0],
-    Ordered,
+		Ordered,
 	}
 }
 
@@ -85,7 +85,7 @@ func (s *Scenario) Play() bool {
 
 			nextQuestionTimer = time.AfterFunc(2*time.Second, func() {
 				nextQuestionTimer = nil
-        s.activeQuestion = s.RotateQuestions()
+				s.activeQuestion = s.RotateQuestions()
 			})
 		}
 	}
@@ -94,16 +94,16 @@ func (s *Scenario) Play() bool {
 }
 
 func (s *Scenario) Order(o order) {
-  s.order = o
+	s.order = o
 }
 
 func (s *Scenario) RotateQuestions() Question {
-  rand.Seed(time.Now().UTC().UnixNano())
-  set := rand.Intn(len(s.question))
+	rand.Seed(time.Now().UTC().UnixNano())
+	set := rand.Intn(len(s.question))
 
-  if s.order == Ordered {
-    set = int(s.index * int32(len(s.question)) / s.repeat)
-  }
+	if s.order == Ordered {
+		set = int(s.index * int32(len(s.question)) / s.repeat)
+	}
 
 	return s.question[set]
 }
@@ -116,20 +116,20 @@ func (s *Scenario) Repeats() (total int32, correct int32) {
 }
 
 func showResult(isCorrect bool) {
-  c := rl.Green
-  t := correctAnswer
+	c := rl.Green
+	t := CorrectAnswer
 
-  if isCorrect == false {
-    c = rl.Red
-    t = incorrectAnswer
-  }
+	if isCorrect == false {
+		c = rl.Red
+		t = IncorrectAnswer
+	}
 
-  r := rl.NewRectangle(40, 90, 20, 20)
-  o := rl.MeasureText(t, rl.GetFontDefault().BaseSize)
+	r := rl.NewRectangle(40, 90, 20, 20)
+	o := rl.MeasureText(t, rl.GetFontDefault().BaseSize)
 
-  raygui.LabelEx(r, fmt.Sprintf("%s!", t), c, raygui.BackgroundColor(), raygui.BackgroundColor())
+	raygui.LabelEx(r, fmt.Sprintf("%s!", t), c, raygui.BackgroundColor(), raygui.BackgroundColor())
 
-  r.X = r.X + 10 + float32(o)
-  raygui.Label(r, "Ready for next question ....")
+	r.X = r.X + 10 + float32(o)
+	raygui.Label(r, "Ready for next question ....")
 
 }
