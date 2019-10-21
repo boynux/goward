@@ -98,11 +98,13 @@ func createScenario() *Scenario {
 	bg := generators.NewBasicGenerator(0, 20, nil, []string{"+", "-"})
 	ag := generators.NewBasicAdditionGenerator(10, 20)
 	even := generators.NewEvenOddGenerator(1, 50)
+	cg := generators.NewClockGenerator()
 
 	s := NewScenario([]questions.Question{
     questions.NewChoiceQuestion(bg),
     questions.NewChoiceQuestion(even),
     questions.NewRectangleChoiceQuestion(ag),
+    questions.NewClockChoiceQuestion(cg),
   }, TotalQuestionsPerScene, 1)
 	s.Order(Random)
 
