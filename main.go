@@ -7,6 +7,8 @@ import (
 	"syscall"
   "time"
 
+	"github.com/boynux/goward/generators"
+	"github.com/boynux/goward/questions"
 	"github.com/gen2brain/raylib-go/raygui"
 	"github.com/gen2brain/raylib-go/raylib"
 )
@@ -38,16 +40,10 @@ func main() {
 	rl.SetTargetFPS(60)
 
 	raygui.LoadGuiStyle("styles/solarized_light.style")
-
-	bg := NewBasicGenerator(0, 20, nil, []string{"+", "-"})
-	ag := NewBasicAdditionGenerator(10, 20)
-	even := NewEvenOddGenerator(1, 50)
-
-	s := NewScenario([]Question{NewChoiceQuestion(bg), NewChoiceQuestion(even), NewRectangleChoiceQuestion(ag)}, TotalQuestionsPerScene, 1)
-	s.Order(Random)
-
+  
   activityCheck := time.NewTimer(ScreenSaverTimeout)
   saveMode := false
+  s := createScenario()
 
   var animation *Animation
 
@@ -96,6 +92,21 @@ func main() {
 	}
 
 	rl.CloseWindow()
+}
+
+func createScenario() *Scenario {
+	bg := generators.NewBasicGenerator(0, 20, nil, []string{"+", "-"})
+	ag := generators.NewBasicAdditionGenerator(10, 20)
+	even := generators.NewEvenOddGenerator(1, 50)
+
+	s := NewScenario([]questions.Question{
+    questions.NewChoiceQuestion(bg),
+    questions.NewChoiceQuestion(even),
+    questions.NewRectangleChoiceQuestion(ag),
+  }, TotalQuestionsPerScene, 1)
+	s.Order(Random)
+
+  return s
 }
 
 func showProgress(total, progress int32) {

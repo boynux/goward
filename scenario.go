@@ -5,8 +5,9 @@ import (
 	"math/rand"
 	"time"
 
+	"github.com/boynux/goward/questions"
 	"github.com/gen2brain/raylib-go/raygui"
-	rl "github.com/gen2brain/raylib-go/raylib"
+	"github.com/gen2brain/raylib-go/raylib"
 )
 
 var index int
@@ -23,12 +24,12 @@ const (
 )
 
 type Scenario struct {
-	question       []Question
+	question       []questions.Question
 	repeat         int32
 	index          int32
 	correct        int32
 	maxErrors      int32
-	activeQuestion Question
+	activeQuestion questions.Question
 	order          order
 }
 
@@ -42,7 +43,7 @@ const (
 	IncorrectAnswer = "Incorrect"
 )
 
-func NewScenario(q []Question, repeat, maxErrors int32) *Scenario {
+func NewScenario(q []questions.Question, repeat, maxErrors int32) *Scenario {
 	return &Scenario{
 		q,
 		repeat,
@@ -101,7 +102,7 @@ func (s *Scenario) Order(o order) {
 	s.order = o
 }
 
-func (s *Scenario) RotateQuestions() Question {
+func (s *Scenario) RotateQuestions() questions.Question {
 	rand.Seed(time.Now().UTC().UnixNano())
 	set := rand.Intn(len(s.question))
 
