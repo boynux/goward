@@ -14,6 +14,7 @@ import (
 const (
 	TotalQuestionsPerScene = 30
   ScreenSaverTimeout = 60 * time.Second
+  AnimationSpeed = 50 * time.Millisecond
 )
 
 func main() {
@@ -47,15 +48,20 @@ func main() {
 
   activityCheck := time.NewTimer(ScreenSaverTimeout)
   saveMode := false
+
   var animation *Animation
 
 	for !exit && !rl.WindowShouldClose() {
     if rl.IsMouseButtonReleased(rl.MouseLeftButton) || rl.IsMouseButtonDown(rl.MouseLeftButton) {
       activityCheck = time.NewTimer(ScreenSaverTimeout)
+      if ticker != nil {
+        ticker.Stop()
+        ticker = nil
+      }
       saveMode = false
     }
 
-		rl.BeginDrawing()
+    rl.BeginDrawing()
 
     if !saveMode {
       rl.ClearBackground(raygui.BackgroundColor())
@@ -77,7 +83,7 @@ func main() {
       drawPolygon(animation)
     }
 
-		rl.EndDrawing()
+    rl.EndDrawing()
 
 		select {
 		case <-done:
@@ -100,13 +106,11 @@ func showProgress(total, progress int32) {
 	raygui.Label(rl.NewRectangle(float32(rl.GetScreenWidth())/2-35, float32(rl.GetScreenHeight()-30), 20, 20), fmt.Sprintf("%d", progress+1))
 }
 
-
-var anim *Animation
 var ticker *time.Ticker
 
 func drawPolygon(a *Animation) {
   if ticker == nil {
-    ticker = time.NewTicker(20 * time.Millisecond)
+    ticker = time.NewTicker(AnimationSpeed)
   }
 
   a.Draw()
