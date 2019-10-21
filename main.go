@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+  "time"
 
 	"github.com/gen2brain/raylib-go/raygui"
 	"github.com/gen2brain/raylib-go/raylib"
@@ -12,6 +13,7 @@ import (
 
 const (
 	TotalQuestionsPerScene = 30
+  ScreenSaverTimeout = 60 * time.Second
 )
 
 func main() {
@@ -23,7 +25,6 @@ func main() {
 
 	go func() {
 		sig := <-sigs
-		fmt.Println()
 		fmt.Println(sig)
 		done <- true
 	}()
@@ -44,28 +45,46 @@ func main() {
 	s := NewScenario([]Question{NewChoiceQuestion(bg), NewChoiceQuestion(even), NewRectangleChoiceQuestion(ag)}, TotalQuestionsPerScene, 1)
 	s.Order(Random)
 
+  activityCheck := time.NewTimer(ScreenSaverTimeout)
+  saveMode := false
+  var animation *Animation
+
 	for !exit && !rl.WindowShouldClose() {
+    if rl.IsMouseButtonReleased(rl.MouseLeftButton) || rl.IsMouseButtonDown(rl.MouseLeftButton) {
+      activityCheck = time.NewTimer(ScreenSaverTimeout)
+      saveMode = false
+    }
+
 		rl.BeginDrawing()
-		rl.ClearBackground(raygui.BackgroundColor())
 
-		r, c := s.Repeats()
+    if !saveMode {
+      rl.ClearBackground(raygui.BackgroundColor())
 
-		raygui.Label(rl.NewRectangle(float32(screenWidth-80), 5, 75, 20), fmt.Sprintf("Correct: %d", c))
+      r, c := s.Repeats()
 
-		if s.Play() == false {
-			if showResults(r, c) {
-				s.Restart()
-			}
-		}
+      raygui.Label(rl.NewRectangle(float32(screenWidth-80), 5, 75, 20), fmt.Sprintf("Correct: %d", c))
 
-		showProgress(TotalQuestionsPerScene, r)
-		exit = raygui.Button(rl.NewRectangle(float32(screenWidth-60-5), float32(screenHeight-30-5), 60, 30), "Exit")
+      if s.Play() == false {
+        if showResults(r, c) {
+          s.Restart()
+        }
+      }
+
+      showProgress(TotalQuestionsPerScene, r)
+      exit = raygui.Button(rl.NewRectangle(float32(screenWidth-60-5), float32(screenHeight-30-5), 60, 30), "Exit")
+    } else {
+      rl.ClearBackground(rl.Black)
+      drawPolygon(animation)
+    }
 
 		rl.EndDrawing()
 
 		select {
 		case <-done:
 			exit = true
+    case <-activityCheck.C:
+      animation = NewAnimation()
+      saveMode = true
 		default:
 		}
 	}
@@ -79,4 +98,22 @@ func showProgress(total, progress int32) {
 
 	raygui.ProgressBar(r, p)
 	raygui.Label(rl.NewRectangle(float32(rl.GetScreenWidth())/2-35, float32(rl.GetScreenHeight()-30), 20, 20), fmt.Sprintf("%d", progress+1))
+}
+
+
+var anim *Animation
+var ticker *time.Ticker
+
+func drawPolygon(a *Animation) {
+  if ticker == nil {
+    ticker = time.NewTicker(20 * time.Millisecond)
+  }
+
+  a.Draw()
+
+  select{
+  case <-ticker.C:
+    a.Update()
+  default:
+  }
 }
