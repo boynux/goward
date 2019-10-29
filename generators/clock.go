@@ -7,19 +7,27 @@ import (
 )
 
 type ClockGenerator struct {
-	min  int32
-	hour int32
+	min      int32
+	hour     int32
+	military bool
 }
 
-func NewClockGenerator() *ClockGenerator {
-	return &ClockGenerator{}
+func NewClockGenerator(military bool) *ClockGenerator {
+	return &ClockGenerator{
+		military: military,
+	}
 }
 
 func (c *ClockGenerator) Generate() bool {
 	rand.Seed(time.Now().UTC().UnixNano())
 
 	c.min = rand.Int31n(60) / 15 * 15
-	c.hour = rand.Int31n(12) + 1
+
+	if c.military {
+		c.hour = rand.Int31n(24) + 1
+	} else {
+		c.hour = rand.Int31n(12) + 1
+	}
 
 	return true
 }
@@ -33,7 +41,17 @@ func (c *ClockGenerator) Answer() string {
 }
 
 func (c *ClockGenerator) FalseAnswer() string {
-	return fmt.Sprintf("%d:%d", rand.Int31n(12)+1, rand.Int31n(60)/15*15)
+	maxHour := int32(12)
+	if c.military {
+		maxHour = 24
+	}
+
+	for {
+		s := fmt.Sprintf("%d:%d", rand.Int31n(maxHour)+1, rand.Int31n(60)/15*15)
+		if s != c.Answer() {
+			return s
+		}
+	}
 }
 
 func (c *ClockGenerator) MaxChoices() int {

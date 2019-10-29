@@ -98,7 +98,7 @@ func createScenario() *Scenario {
 	bg := generators.NewBasicGenerator(0, 20, nil, []string{"+", "-"})
 	ag := generators.NewBasicAdditionGenerator(10, 20)
 	even := generators.NewEvenOddGenerator(1, 50)
-	cg := generators.NewClockGenerator()
+	cg := generators.NewClockGenerator(true)
 	ma := generators.NewMultiAdditionGenerator(0, 10, 3, nil)
 
 	s := NewScenario([]questions.Question{

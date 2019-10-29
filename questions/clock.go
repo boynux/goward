@@ -44,7 +44,7 @@ func (q *ClockChoiceQuestion) Draw(x, y, w, h float32) {
 	}
 
 	mx, my := math.Sincos(float64(q.gen.(*generators.ClockGenerator).GetMinute()) / 60 * math.Pi * 2)
-	hx, hy := math.Sincos(float64(q.gen.(*generators.ClockGenerator).GetHour()) / 12 * math.Pi * 2)
+	hx, hy := math.Sincos(float64(q.gen.(*generators.ClockGenerator).GetHour()%12) / 12 * math.Pi * 2)
 
 	rl.DrawTextureEx(clockTexture, rl.Vector2{x + w/2, y - 50}, 0, ImageScale, raygui.BackgroundColor())
 
