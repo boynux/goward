@@ -1,4 +1,4 @@
-package generators 
+package generators
 
 type BasicAdditionGenerator struct {
 	*BasicGenerator

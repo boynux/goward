@@ -5,7 +5,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-  "time"
+	"time"
 
 	"github.com/boynux/goward/generators"
 	"github.com/boynux/goward/questions"
@@ -15,8 +15,8 @@ import (
 
 const (
 	TotalQuestionsPerScene = 30
-  ScreenSaverTimeout = 60 * time.Second
-  AnimationSpeed = 50 * time.Millisecond
+	ScreenSaverTimeout     = 180 * time.Second
+	AnimationSpeed         = 50 * time.Millisecond
 )
 
 func main() {
@@ -39,54 +39,54 @@ func main() {
 	rl.InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window")
 	rl.SetTargetFPS(60)
 
-	raygui.LoadGuiStyle("styles/solarized_light.style")
-  
-  activityCheck := time.NewTimer(ScreenSaverTimeout)
-  saveMode := false
-  s := createScenario()
+	raygui.LoadGuiStyle("/etc/goward/styles/solarized_light.style")
 
-  var animation *Animation
+	activityCheck := time.NewTimer(ScreenSaverTimeout)
+	saveMode := false
+	s := createScenario()
+
+	var animation *Animation
 
 	for !exit && !rl.WindowShouldClose() {
-    if rl.IsMouseButtonReleased(rl.MouseLeftButton) || rl.IsMouseButtonDown(rl.MouseLeftButton) {
-      activityCheck = time.NewTimer(ScreenSaverTimeout)
-      if ticker != nil {
-        ticker.Stop()
-        ticker = nil
-      }
-      saveMode = false
-    }
+		if rl.IsMouseButtonReleased(rl.MouseLeftButton) || rl.IsMouseButtonDown(rl.MouseLeftButton) {
+			activityCheck = time.NewTimer(ScreenSaverTimeout)
+			if ticker != nil {
+				ticker.Stop()
+				ticker = nil
+			}
+			saveMode = false
+		}
 
-    rl.BeginDrawing()
+		rl.BeginDrawing()
 
-    if !saveMode {
-      rl.ClearBackground(raygui.BackgroundColor())
+		if !saveMode {
+			rl.ClearBackground(raygui.BackgroundColor())
 
-      r, c := s.Repeats()
+			r, c := s.Repeats()
 
-      raygui.Label(rl.NewRectangle(float32(screenWidth-80), 5, 75, 20), fmt.Sprintf("Correct: %d", c))
+			raygui.Label(rl.NewRectangle(float32(screenWidth-80), 5, 75, 20), fmt.Sprintf("Correct: %d", c))
 
-      if s.Play() == false {
-        if showResults(r, c) {
-          s.Restart()
-        }
-      }
+			if s.Play() == false {
+				if showResults(r, c) {
+					s.Restart()
+				}
+			}
 
-      showProgress(TotalQuestionsPerScene, r)
-      exit = raygui.Button(rl.NewRectangle(float32(screenWidth-60-5), float32(screenHeight-30-5), 60, 30), "Exit")
-    } else {
-      rl.ClearBackground(rl.Black)
-      drawPolygon(animation)
-    }
+			showProgress(TotalQuestionsPerScene, r)
+			exit = raygui.Button(rl.NewRectangle(float32(screenWidth-60-5), float32(screenHeight-30-5), 60, 30), "Exit")
+		} else {
+			rl.ClearBackground(rl.Black)
+			drawPolygon(animation)
+		}
 
-    rl.EndDrawing()
+		rl.EndDrawing()
 
 		select {
 		case <-done:
 			exit = true
-    case <-activityCheck.C:
-      animation = NewAnimation()
-      saveMode = true
+		case <-activityCheck.C:
+			animation = NewAnimation()
+			saveMode = true
 		default:
 		}
 	}
@@ -99,16 +99,18 @@ func createScenario() *Scenario {
 	ag := generators.NewBasicAdditionGenerator(10, 20)
 	even := generators.NewEvenOddGenerator(1, 50)
 	cg := generators.NewClockGenerator()
+	ma := generators.NewMultiAdditionGenerator(0, 10, 3, nil)
 
 	s := NewScenario([]questions.Question{
-    questions.NewChoiceQuestion(bg),
-    questions.NewChoiceQuestion(even),
-    questions.NewRectangleChoiceQuestion(ag),
-    questions.NewClockChoiceQuestion(cg),
-  }, TotalQuestionsPerScene, 1)
+		questions.NewChoiceQuestion(bg),
+		questions.NewChoiceQuestion(ma),
+		questions.NewChoiceQuestion(even),
+		questions.NewRectangleChoiceQuestion(ag),
+		questions.NewClockChoiceQuestion(cg),
+	}, TotalQuestionsPerScene, 1)
 	s.Order(Random)
 
-  return s
+	return s
 }
 
 func showProgress(total, progress int32) {
@@ -122,15 +124,15 @@ func showProgress(total, progress int32) {
 var ticker *time.Ticker
 
 func drawPolygon(a *Animation) {
-  if ticker == nil {
-    ticker = time.NewTicker(AnimationSpeed)
-  }
+	if ticker == nil {
+		ticker = time.NewTicker(AnimationSpeed)
+	}
 
-  a.Draw()
+	a.Draw()
 
-  select{
-  case <-ticker.C:
-    a.Update()
-  default:
-  }
+	select {
+	case <-ticker.C:
+		a.Update()
+	default:
+	}
 }

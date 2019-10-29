@@ -21,7 +21,7 @@ type ClockChoiceQuestion struct {
 }
 
 func NewClockChoiceQuestion(g *generators.ClockGenerator) Question {
-	i := rl.LoadImage("images/clock.png")
+	i := rl.LoadImage("/etc/goward/images/clock.png")
 	clockTexture = rl.LoadTextureFromImage(i)
 	rl.UnloadImage(i)
 
