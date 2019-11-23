@@ -77,7 +77,7 @@ func (s *Scenario) Play() bool {
 	}
 
 	if a := s.activeQuestion.IsAnswerCorrect(); a != nil {
-		if *a == true || s.activeQuestion.Tries() >= s.maxErrors {
+		if *a == true || s.activeQuestion.Tries() >= s.maxErrors || s.activeQuestion.Tries() == -1 {
 			lastAnswerWasCorrect = false
 
 			if *a == true {
@@ -91,6 +91,7 @@ func (s *Scenario) Play() bool {
 			nextQuestionTimer = time.AfterFunc(NextQuestionDelay, func() {
 				nextQuestionTimer = nil
 				s.activeQuestion = s.RotateQuestions()
+				s.activeQuestion.Reset()
 			})
 		}
 	}

@@ -102,10 +102,10 @@ func createScenario() *Scenario {
 	ma := generators.NewMultiAdditionGenerator(0, 10, 3, nil)
 
 	s := NewScenario([]questions.Question{
-		questions.NewChoiceQuestion(bg),
-		questions.NewChoiceQuestion(ma),
-		questions.NewChoiceQuestion(even),
-		questions.NewRectangleChoiceQuestion(ag),
+		questions.NewTimerDecorator(questions.NewChoiceQuestion(bg)),
+		questions.NewTimerDecorator(questions.NewChoiceQuestion(ma)),
+		questions.NewTimerDecorator(questions.NewChoiceQuestion(even)),
+		questions.NewTimerDecorator(questions.NewRectangleChoiceQuestion(ag)),
 		questions.NewClockChoiceQuestion(cg),
 	}, TotalQuestionsPerScene, 1)
 	s.Order(Random)
