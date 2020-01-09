@@ -7,6 +7,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/boynux/goward/actions"
 	"github.com/boynux/goward/generators"
 	"github.com/boynux/goward/questions"
 	"github.com/gen2brain/raylib-go/raygui"
@@ -14,9 +15,9 @@ import (
 )
 
 const (
-	TotalQuestionsPerScene = 30
 	ScreenSaverTimeout     = 180 * time.Second
 	AnimationSpeed         = 50 * time.Millisecond
+	MaxQuestionTimeout     = 1 * time.Minute
 )
 
 func main() {
@@ -31,6 +32,9 @@ func main() {
 		fmt.Println(sig)
 		done <- true
 	}()
+
+	fmt.Printf("Total questions: %d\n", Config.TotalQuestionsPerScene)
+	fmt.Printf("Question timeout: %d\n", Config.QuestionTimeout)
 
 	screenWidth := int32(280)
 	screenHeight := int32(210)
@@ -67,12 +71,12 @@ func main() {
 			raygui.Label(rl.NewRectangle(float32(screenWidth-80), 5, 75, 20), fmt.Sprintf("Correct: %d", c))
 
 			if s.Play() == false {
-				if showResults(r, c) {
+				if showResults(r, c, actions.CreateTurnOnTVAction(Config.IFTTTKey)) {
 					s.Restart()
 				}
 			}
 
-			showProgress(TotalQuestionsPerScene, r)
+			showProgress(int32(Config.TotalQuestionsPerScene), r)
 			exit = raygui.Button(rl.NewRectangle(float32(screenWidth-60-5), float32(screenHeight-30-5), 60, 30), "Exit")
 		} else {
 			rl.ClearBackground(rl.Black)
@@ -95,19 +99,19 @@ func main() {
 }
 
 func createScenario() *Scenario {
-	bg := generators.NewBasicGenerator(0, 20, nil, []string{"+", "-"})
+	bg := generators.NewBasicGenerator(5, 30, nil, []string{"+", "-"})
 	ag := generators.NewBasicAdditionGenerator(10, 20)
-	even := generators.NewEvenOddGenerator(1, 50)
+	// even := generators.NewEvenOddGenerator(1, 50)
 	cg := generators.NewClockGenerator(true)
-	ma := generators.NewMultiAdditionGenerator(0, 10, 3, nil)
+	ma := generators.NewMultiAdditionGenerator(5, 30, 3, nil)
 
 	s := NewScenario([]questions.Question{
-		questions.NewChoiceQuestion(bg),
-		questions.NewChoiceQuestion(ma),
-		questions.NewChoiceQuestion(even),
-		questions.NewRectangleChoiceQuestion(ag),
+		questions.NewTimerDecorator(questions.NewChoiceQuestion(bg),  Config.QuestionTimeout),
+		questions.NewTimerDecorator(questions.NewChoiceQuestion(ma), Config.QuestionTimeout),
+		// questions.NewTimerDecorator(questions.NewChoiceQuestion(even), MaxQuestionTimeout),
+		questions.NewTimerDecorator(questions.NewRectangleChoiceQuestion(ag), Config.QuestionTimeout),
 		questions.NewClockChoiceQuestion(cg),
-	}, TotalQuestionsPerScene, 1)
+	}, int32(Config.TotalQuestionsPerScene), 1)
 	s.Order(Random)
 
 	return s

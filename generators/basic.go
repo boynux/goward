@@ -114,8 +114,14 @@ func (a *BasicGenerator) Answer() string {
 func (a *BasicGenerator) FalseAnswer() string {
 	rand.Seed(time.Now().UTC().UnixNano())
 
+	max := a.Max-a.Min+1
+
+	if a.BlankIndex != nil && *a.BlankIndex == 2 {
+		max = a.Max+a.Min
+	}
+
 	for {
-		ans := fmt.Sprintf("%d", rand.Int31n(a.Max-a.Min+1)+a.Min)
+		ans := fmt.Sprintf("%d", rand.Int31n(max)+a.Min)
 
 		if ans != a.Answer() {
 			return ans
